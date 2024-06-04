@@ -13,15 +13,15 @@ import {
   Stack,
   Text
 } from '@chakra-ui/react';
-import { getCars } from '../../services/car';
+import { getData } from '../../services/rental';
 
-export default function CarView() {
+export default function RentalView() {
   const [ cars, setCars ] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getCars('/cars');
+        const data = await getData('/rentals');
         console.log('data', data);
         setCars(data);
       } catch (error) {
@@ -41,17 +41,17 @@ export default function CarView() {
         {
           cars.map((data) => {
             return (
-              <div key={data.car_id}>
+              <div key={data.rental_id}>
                 <Card maxW='sm' mb='40px'>
                   <CardBody>
                     <Image
-                      src={data.image}
+                      src={data.car.image}
                       alt='Green double couch with wooden legs'
                       borderRadius='lg'
                     />
                     <Stack mt='6' spacing='3'>
                       <Heading size='md'>
-                        <span>{`${data.car_name} - ${data.car_model}`}</span>
+                        <span>{`${data.car.car_name} - ${data.car.car_model}`}</span>
                       </Heading>
                       <Text>
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tincidunt nec ligula sed tristique. Vivamus sit amet nulla sit amet libero euismod malesuada quis luctus orci.

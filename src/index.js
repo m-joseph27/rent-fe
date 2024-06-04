@@ -31,16 +31,14 @@ const ScrollToTop = () => {
 
 root.render(
   <ChakraProvider theme={theme}>
-    <React.StrictMode>
-      <ThemeEditorProvider>
-        <HashRouter>
-          <ScrollToTop />
-          <Switch>
-            <Route path={`/list`} component={Layout} />
-            <Redirect from='/' to='/list/car' />
-          </Switch>
-        </HashRouter>
-      </ThemeEditorProvider>
-    </React.StrictMode>
+    <ThemeEditorProvider>
+      <HashRouter>
+        <ScrollToTop />
+        <Switch>
+          <Route path={`/list`} component={Layout} />
+          <Redirect from='/' to='/list/car' />
+        </Switch>
+      </HashRouter>
+    </ThemeEditorProvider>
   </ChakraProvider>
 );

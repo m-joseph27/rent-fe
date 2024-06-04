@@ -6,6 +6,7 @@ import {
   MdInsertChart,
 } from "react-icons/md";
 import CarView from "./views/car";
+import RentalView from "./views/rental";
 
 const routes = [
   {
@@ -20,6 +21,7 @@ const routes = [
     path: "/rental-list",
     layout: "/list",
     icon: <Icon as={MdInsertChart} width='20px' height='20px' color='inherit' />,
+    component: RentalView
   }
 ];
 
