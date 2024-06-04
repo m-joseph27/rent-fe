@@ -1,17 +1,46 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React, {useEffect} from 'react';
+import { createRoot } from 'react-dom/client';
+import { HashRouter, Route, Switch, Redirect, useHistory } from 'react-router-dom';
+import Layout from './components/layout/index';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import { ChakraProvider, theme } from '@chakra-ui/react';
+import { ThemeEditorProvider } from '@hypertheme-editor/chakra-ui';
+
+const container = document.getElementById('root');
+const root = createRoot(container);
+
+const ScrollToTop = () => {
+  const history = useHistory();
+
+  useEffect(() => {
+    const unlisten = history.listen(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    return () => {
+      unlisten();
+    };
+  }, [history]);
+
+  return null;
+};
+
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <ChakraProvider theme={theme}>
+    <React.StrictMode>
+      <ThemeEditorProvider>
+        <HashRouter>
+          <ScrollToTop />
+          <Switch>
+            <Route path={`/list`} component={Layout} />
+            <Redirect from='/' to='/list/car' />
+          </Switch>
+        </HashRouter>
+      </ThemeEditorProvider>
+    </React.StrictMode>
+  </ChakraProvider>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
