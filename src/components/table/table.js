@@ -52,6 +52,7 @@ const ChakraTableComponent = ({ data, handleDelete, handleUpdate }) => {
             <Th border="1px" borderColor="gray.300">Drop Off Date</Th>
             <Th border="1px" borderColor="gray.300">Pick Up Location</Th>
             <Th border="1px" borderColor="gray.300">Drop Off Location</Th>
+            <Th border="1px" borderColor="gray.300">Action</Th>
           </Tr>
         </Thead>
         <Tbody border="1px" borderColor="gray.200">

@@ -49,6 +49,7 @@ const CarTableComponent = ({ data, handleDelete, handleUpdate }) => {
             <Th border="1px" borderColor="gray.300">Car Model</Th>
             <Th border="1px" borderColor="gray.300">Day Rate</Th>
             <Th border="1px" borderColor="gray.300">Month Rate</Th>
+            <Th border="1px" borderColor="gray.300">Action</Th>
           </Tr>
         </Thead>
         <Tbody border="1px" borderColor="gray.200">
