@@ -140,7 +140,7 @@ export default function Layout(props) {
 							<Box mx='auto' p={{ base: '20px', md: '30px' }} pe='20px' minH='100vh' pt='50px'>
 								<Switch>
 									{getRoutes(routes)}
-									<Redirect from='/' to='/list/car-list' />
+									<Redirect from='/' to='/list/list-car-to-rent' />
 								</Switch>
 							</Box>
 						) : null}
