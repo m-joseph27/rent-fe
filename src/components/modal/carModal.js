@@ -12,6 +12,7 @@ import {
   FormErrorMessage,
   Input,
   Button,
+  Box,
 } from '@chakra-ui/react';
 
 const CarModal = ({ isOpen, onClose, formData, handleInputChange, handleAddData, errors, mode }) => {
@@ -19,7 +20,7 @@ const CarModal = ({ isOpen, onClose, formData, handleInputChange, handleAddData,
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{mode === "edit" ? "Update Rent" : "Rent Car"}</ModalHeader>
+        <ModalHeader>{mode === "edit" ? "Update Car" : "Add Car"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <FormControl isInvalid={errors.car_name} mb={3}>
@@ -53,7 +54,7 @@ const CarModal = ({ isOpen, onClose, formData, handleInputChange, handleAddData,
           <FormControl isInvalid={errors.month_rate} mb={3}>
             <FormLabel>Month Rate</FormLabel>
             <Input
-            type="number"
+              type="number"
               name="month_rate"
               value={formData.month_rate}
               onChange={handleInputChange}
@@ -63,7 +64,7 @@ const CarModal = ({ isOpen, onClose, formData, handleInputChange, handleAddData,
         </ModalBody>
         <ModalFooter>
           <Button variant="outline" colorScheme="blue" onClick={handleAddData}>
-            {mode === "edit" ? "Update" : "Rent Now"}
+            {mode === "edit" ? "Update" : "Add"}
           </Button>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
         </ModalFooter>

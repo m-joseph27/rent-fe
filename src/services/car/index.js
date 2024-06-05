@@ -47,4 +47,14 @@ export const deleteCar = async (endpoint, id) => {
   }
 };
 
+export const uploadImage = async (endpoint, data) => {
+  try {
+    const response = await apiClient.post(endpoint, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error sending data:', error);
+    throw error;
+  }
+};
+
 export default apiClient;

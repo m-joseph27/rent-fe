@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Box, useToast } from '@chakra-ui/react';
-import { getCars, updateCar, deleteCar } from '../../services/car';
+import { Box, Button, useToast } from '@chakra-ui/react';
+import { getCars, updateCar, deleteCar, createCar } from '../../services/car';
 import CarTableComponent from '../../components/table/carTable';
 import CarModal from '../../components/modal/carModal';
 
 export default function AddCarView() {
   const toast = useToast();
-  const [ cars, setCars ] = useState([]);
+  const [cars, setCars] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [errors, setErrors] = useState({});
   const [isUpdating, setIsUpdating] = useState(false);
@@ -63,19 +63,27 @@ export default function AddCarView() {
           duration: 5000,
           isClosable: true,
         });
+      } else {
+        await createCar('/cars', formData);
+        toast({
+          title: 'Success',
+          description: "Car Added Successfully",
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
       }
       setIsOpen(false);
       getAllCar();
     } catch (error) {
-      setErrors({ form: 'Failed to update car' });
+      setErrors({ form: 'Failed to add or update car' });
     }
-    console.log('here');
   };
 
-  const handleDelete = (cars) => {
+  const handleDelete = (car) => {
     const deleteCarById = async () => {
       try {
-        await deleteCar(`/cars/${cars.car_id}`);
+        await deleteCar(`/cars/${car.car_id}`);
         toast({
           title: 'Success',
           description: "Delete Successfully",
@@ -98,14 +106,15 @@ export default function AddCarView() {
       car_model: car.car_model,
       day_rate: car.day_rate,
       month_rate: car.month_rate,
-    })
+    });
     setCurrentCarId(car.car_id);
     setIsUpdating(true);
     setIsOpen(true);
   }
 
-  return(
+  return (
     <Box mt="100px" pl="20px">
+      <Button mb="30px" variant="solid" colorScheme="blue" onClick={() => setIsOpen(true)}>Add Car</Button>
       <CarTableComponent data={cars} handleDelete={handleDelete} handleUpdate={handleUpdate} />
       <CarModal
         isOpen={isOpen}
@@ -114,8 +123,8 @@ export default function AddCarView() {
         handleInputChange={handleInputChange}
         handleAddData={handleAddData}
         errors={errors}
-        mode="edit"
+        mode={isUpdating ? 'edit' : 'add'}
       />
     </Box>
-  )
+  );
 }
