@@ -18,6 +18,7 @@ import {
   PopoverContent,
   Box,
   Grid,
+  Image,
 } from '@chakra-ui/react';
 import { formatDate } from '../../utils/formatDate';
 import {
@@ -43,6 +44,7 @@ const ChakraTableComponent = ({ data, handleDelete, handleUpdate }) => {
         borderColor="gray.300">
         <Thead>
           <Tr>
+            <Th border="1px" borderColor="gray.300">Car Image</Th>
             <Th border="1px" borderColor="gray.300">Car Name</Th>
             <Th border="1px" borderColor="gray.300">Car Model</Th>
             <Th border="1px" borderColor="gray.300">Order Date</Th>
@@ -55,6 +57,14 @@ const ChakraTableComponent = ({ data, handleDelete, handleUpdate }) => {
         <Tbody border="1px" borderColor="gray.200">
           {data.map((item, index) => (
             <Tr key={index}>
+              <Td>
+                <Image
+                  boxSize='100px'
+                  objectFit='cover'
+                  src={item.car.image}
+                  alt='car image'
+                />
+              </Td>
               <Td>{item.car.car_name}</Td>
               <Td>{item.car.car_model}</Td>
               <Td>{formatDate(item.order_date)}</Td>
