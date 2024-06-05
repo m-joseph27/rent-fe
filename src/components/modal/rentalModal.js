@@ -14,12 +14,12 @@ import {
   Button,
 } from '@chakra-ui/react';
 
-const AddDataModal = ({ isOpen, onClose, formData, handleInputChange, handleAddData, errors }) => {
+const AddDataModal = ({ isOpen, onClose, formData, handleInputChange, handleAddData, errors, mode }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Rent Car</ModalHeader>
+        <ModalHeader>{mode === "edit" ? "Update Rent" : "Rent Car"}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <FormControl isInvalid={errors.order_date} mb={3}>
@@ -72,7 +72,9 @@ const AddDataModal = ({ isOpen, onClose, formData, handleInputChange, handleAddD
           </FormControl>
         </ModalBody>
         <ModalFooter>
-          <Button variant="outline" colorScheme="blue" onClick={handleAddData}>Rent Now</Button>
+          <Button variant="outline" colorScheme="blue" onClick={handleAddData}>
+            {mode === "edit" ? "Update" : "Rent Now"}
+          </Button>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
         </ModalFooter>
       </ModalContent>

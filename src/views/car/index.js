@@ -173,6 +173,7 @@ export default function CarView() {
           handleInputChange={handleInputChange}
           handleAddData={handleAddData}
           errors={errors}
+          mode="create"
         />
       </Box>
     </Box>

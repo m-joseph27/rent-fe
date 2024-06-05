@@ -67,7 +67,7 @@ const ChakraTableComponent = ({ data, handleDelete, handleUpdate }) => {
                   <Button
                     colorScheme="blue"
                     variant="outline"
-                    onClick={() => handleUpdate(index)}
+                    onClick={() => handleUpdate(item)}
                     leftIcon={<MdCarRental />}
                   >
                     Update
