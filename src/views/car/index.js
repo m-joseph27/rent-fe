@@ -11,18 +11,34 @@ import {
   Image,
   SimpleGrid,
   Stack,
-  Text
+  Text,
+  useDisclosure,
+  useToast
 } from '@chakra-ui/react';
+import { MdCarRental } from 'react-icons/md';
 import { getCars } from '../../services/car';
+import AddDataModal from '../../components/modal/rentalModal';
+import { createRental } from '../../services/rental';
+import { formatCurrency } from '../../utils/formatCurrency'; 
 
 export default function CarView() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
   const [ cars, setCars ] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [selectedCarId, setSelectedCarId] = useState(null);
+  const [formData, setFormData] = useState({
+    order_date: '',
+    pickup_date: '',
+    dropoff_date: '',
+    pickup_location: '',
+    dropoff_location: ''
+  });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getCars('/cars');
-        console.log('data', data);
         setCars(data);
       } catch (error) {
         throw new Error();
@@ -31,6 +47,70 @@ export default function CarView() {
 
     fetchData();
   }, []);
+
+  const rentCar = () => {
+    const sendData = async () => {
+      try {
+        await createRental('/rentals', {...formData, car_id: selectedCarId})
+      } catch (error) {
+        throw new Error();
+      }
+    }
+
+    sendData();
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleAddData = () => {
+    if (validate()) {
+      rentCar();
+      onClose();
+      toast({
+        title: 'Success',
+        description: "You rent the car",
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const validate = () => {
+    let tempErrors = {};
+    if (!formData.order_date) tempErrors.order_date = "Order date is required";
+    if (!formData.pickup_date) tempErrors.pickup_date = "Pick up date is required";
+    if (!formData.dropoff_date) tempErrors.dropoff_date = "Drop off is required";
+    if (!formData.pickup_location) tempErrors.pickup_location = "Pick up location is required";
+    if (!formData.dropoff_location) tempErrors.dropoff_location = "Drop off location is required";
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
+  const resetForm = () => {
+    setFormData({
+      order_date: '',
+      pickup_date: '',
+      dropoff_date: '',
+      pickup_location: '',
+      dropoff_location: ''
+    });
+    setErrors({});
+  };
+
+  const handleOpenModal = (carId) => {
+    setSelectedCarId(carId);
+    onOpen();
+  };
+
+  const handleCloseModal = () => {
+    resetForm();
+    onClose();
+  };
 
   return(
     <Box mt="100px" pl="20px">
@@ -46,7 +126,7 @@ export default function CarView() {
                   <CardBody>
                     <Image
                       src={data.image}
-                      alt='Green double couch with wooden legs'
+                      alt='car-image'
                       borderRadius='lg'
                     />
                     <Stack mt='6' spacing='3'>
@@ -54,15 +134,23 @@ export default function CarView() {
                         <span>{`${data.car_name} - ${data.car_model}`}</span>
                       </Heading>
                       <Text>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras tincidunt nec ligula sed tristique. Vivamus sit amet nulla sit amet libero euismod malesuada quis luctus orci.
+                        <SimpleGrid column={2} spacing={1}>
+                          <span>{`Daily ${formatCurrency(data.day_rate)}`}</span>
+                          <span>{`Monthly ${formatCurrency(data.month_rate)}`}</span>
+                        </SimpleGrid>
                       </Text>
                     </Stack>
                   </CardBody>
                   <Divider />
                   <CardFooter>
                     <ButtonGroup spacing='2'>
-                      <Button variant='solid' colorScheme='blue'>
-                        Rent Now
+                      <Button
+                        variant='outline'
+                        colorScheme='blue'
+                        onClick={() => handleOpenModal(data.car_id)}
+                        leftIcon={<MdCarRental />}
+                        size="sm">
+                        Rent
                       </Button>
                     </ButtonGroup>
                   </CardFooter>
@@ -72,6 +160,16 @@ export default function CarView() {
           })
         }
       </SimpleGrid>
+      <Box>
+        <AddDataModal
+          isOpen={isOpen}
+          onClose={handleCloseModal}
+          formData={formData}
+          handleInputChange={handleInputChange}
+          handleAddData={handleAddData}
+          errors={errors}
+        />
+      </Box>
     </Box>
   )
 }

@@ -22,7 +22,6 @@ export default function AddCarView() {
     const fetchData = async () => {
       try {
         const data = await getCars('/cars');
-        console.log('data', data);
         setCars(data);
       } catch (error) {
         throw new Error();
