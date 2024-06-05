@@ -16,7 +16,7 @@ export default function AddCarView() {
     car_model: '',
     day_rate: '',
     month_rate: '',
-    image: null, // Tambahkan field untuk gambar
+    image: null,
   });
 
   useEffect(() => {
@@ -61,7 +61,7 @@ export default function AddCarView() {
         console.log('image data', imageData);
         const uploadResponse = await uploadImage('/cars/upload', imageData);
         console.log('upload res', uploadResponse);
-        imageUrl = uploadResponse.url; // Ambil URL dari response
+        imageUrl = uploadResponse.url;
       }
 
       const data = {
@@ -122,7 +122,7 @@ export default function AddCarView() {
       car_model: car.car_model,
       day_rate: car.day_rate,
       month_rate: car.month_rate,
-      image: null, // Reset gambar saat update
+      image: null,
     });
     setCurrentCarId(car.car_id);
     setIsUpdating(true);
