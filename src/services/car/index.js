@@ -49,7 +49,11 @@ export const deleteCar = async (endpoint, id) => {
 
 export const uploadImage = async (endpoint, data) => {
   try {
-    const response = await apiClient.post(endpoint, data);
+    const response = await axios.post(endpoint, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   } catch (error) {
     console.error('Error sending data:', error);

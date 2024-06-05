@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, useToast } from '@chakra-ui/react';
-import { getCars, updateCar, deleteCar, createCar } from '../../services/car';
+import { getCars, updateCar, deleteCar, uploadImage, createCar } from '../../services/car';
 import CarTableComponent from '../../components/table/carTable';
 import CarModal from '../../components/modal/carModal';
 
@@ -16,23 +16,20 @@ export default function AddCarView() {
     car_model: '',
     day_rate: '',
     month_rate: '',
+    image: null, // Tambahkan field untuk gambar
   });
 
   useEffect(() => {
     getAllCar();
   }, []);
 
-  const getAllCar = () => {
-    const fetchData = async () => {
-      try {
-        const data = await getCars('/cars');
-        setCars(data);
-      } catch (error) {
-        throw new Error();
-      }
+  const getAllCar = async () => {
+    try {
+      const data = await getCars('/cars');
+      setCars(data);
+    } catch (error) {
+      console.error('Failed to fetch cars', error);
     }
-
-    fetchData();
   }
 
   const onClose = () => {
@@ -43,6 +40,7 @@ export default function AddCarView() {
       car_model: '',
       day_rate: '',
       month_rate: '',
+      image: null,
     });
     setErrors({});
   };
@@ -52,10 +50,27 @@ export default function AddCarView() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleAddData = async () => {
+  const handleAddData = async (values) => {
     try {
+      let imageUrl = '';
+
+      if (values.image) {
+        const imageData = new FormData();
+        imageData.append('file', values.image);
+
+        console.log('image data', imageData);
+        const uploadResponse = await uploadImage('/cars/upload', imageData);
+        console.log('upload res', uploadResponse);
+        imageUrl = uploadResponse.url; // Ambil URL dari response
+      }
+
+      const data = {
+        ...values,
+        image: imageUrl,
+      };
+
       if (isUpdating) {
-        await updateCar(`/cars/${currentCarId}`, formData);
+        await updateCar(`/cars/${currentCarId}`, data);
         toast({
           title: 'Success',
           description: "Update Successfully",
@@ -64,7 +79,7 @@ export default function AddCarView() {
           isClosable: true,
         });
       } else {
-        await createCar('/cars', formData);
+        await createCar('/cars', data);
         toast({
           title: 'Success',
           description: "Car Added Successfully",
@@ -77,6 +92,7 @@ export default function AddCarView() {
       getAllCar();
     } catch (error) {
       setErrors({ form: 'Failed to add or update car' });
+      console.error('Failed to add or update car', error);
     }
   };
 
@@ -93,7 +109,7 @@ export default function AddCarView() {
         });
         getAllCar();
       } catch (error) {
-        throw new Error();
+        console.error('Failed to delete car', error);
       }
     }
 
@@ -106,6 +122,7 @@ export default function AddCarView() {
       car_model: car.car_model,
       day_rate: car.day_rate,
       month_rate: car.month_rate,
+      image: null, // Reset gambar saat update
     });
     setCurrentCarId(car.car_id);
     setIsUpdating(true);
