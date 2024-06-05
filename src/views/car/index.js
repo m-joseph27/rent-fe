@@ -36,6 +36,10 @@ export default function CarView() {
   });
 
   useEffect(() => {
+    getAllCars();
+  }, []);
+
+  const getAllCars = () => {
     const fetchData = async () => {
       try {
         const data = await getCars('/cars');
@@ -46,12 +50,13 @@ export default function CarView() {
     }
 
     fetchData();
-  }, []);
+  }
 
   const rentCar = () => {
     const sendData = async () => {
       try {
-        await createRental('/rentals', {...formData, car_id: selectedCarId})
+        await createRental('/rentals', {...formData, car_id: selectedCarId});
+        getAllCars();
       } catch (error) {
         throw new Error();
       }
@@ -69,7 +74,6 @@ export default function CarView() {
   const handleAddData = () => {
     if (validate()) {
       rentCar();
-      onClose();
       toast({
         title: 'Success',
         description: "You rent the car",
@@ -78,6 +82,7 @@ export default function CarView() {
         isClosable: true,
       });
     }
+    handleCloseModal();
   };
 
   const validate = () => {

@@ -37,9 +37,9 @@ export const updateRental = async (endpoint, id, data) => {
   }
 };
 
-export const deleteRental = async (endpoint, id) => {
+export const deleteRental = async (endpoint) => {
   try {
-    const response = await apiClient.delete(endpoint, id);
+    const response = await apiClient.delete(endpoint);
     return response.data;
   } catch (error) {
     console.error('Error sending data:', error);
