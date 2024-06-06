@@ -13,7 +13,9 @@ import {
   Stack,
   Text,
   useDisclosure,
-  useToast
+  useToast,
+  Spinner,
+  Center
 } from '@chakra-ui/react';
 import { MdCarRental } from 'react-icons/md';
 import { getCars } from '../../services/car';
@@ -27,6 +29,7 @@ export default function CarView() {
   const [ cars, setCars ] = useState([]);
   const [errors, setErrors] = useState({});
   const [selectedCarId, setSelectedCarId] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     order_date: '',
     pickup_date: '',
@@ -44,8 +47,16 @@ export default function CarView() {
       try {
         const data = await getCars('/cars');
         setCars(data);
+        setLoading(false);
       } catch (error) {
-        throw new Error();
+        setLoading(true);
+        toast({
+          title: 'Error.',
+          description: "Seems like the server doesn't working",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
       }
     }
 
@@ -58,7 +69,13 @@ export default function CarView() {
         await createRental('/rentals', {...formData, car_id: selectedCarId});
         getAllCars();
       } catch (error) {
-        throw new Error();
+        toast({
+          title: 'Failed.',
+          description: "Sorry for the issue.",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
       }
     }
 
@@ -119,63 +136,73 @@ export default function CarView() {
 
   return(
     <Box mt="100px" pl="20px">
-      <SimpleGrid
-        columns={{ sm: 2, md: 3 }}
-        gap='10px'
-      >
-        {
-          cars.map((data) => {
-            return (
-              <div key={data.car_id}>
-                <Card maxW='sm' mb='40px'>
-                  <CardBody>
-                    <Image
-                      src={data.image}
-                      alt='car-image'
-                      borderRadius='lg'
-                    />
-                    <Stack mt='6' spacing='3'>
-                      <Heading size='md'>
-                        <span>{`${data.car_name} - ${data.car_model}`}</span>
-                      </Heading>
-                      <Text>
-                        <SimpleGrid column={2} spacing={1}>
-                          <span>{`Daily ${formatCurrency(data.day_rate)}`}</span>
-                          <span>{`Monthly ${formatCurrency(data.month_rate)}`}</span>
-                        </SimpleGrid>
-                      </Text>
-                    </Stack>
-                  </CardBody>
-                  <Divider />
-                  <CardFooter>
-                    <ButtonGroup spacing='2'>
-                      <Button
-                        variant='outline'
-                        colorScheme='blue'
-                        onClick={() => handleOpenModal(data.car_id)}
-                        leftIcon={<MdCarRental />}
-                        size="sm">
-                        Rent
-                      </Button>
-                    </ButtonGroup>
-                  </CardFooter>
-                </Card>
-              </div>
-            )
-          })
-        }
-      </SimpleGrid>
-      <Box>
-        <AddDataModal
-          isOpen={isOpen}
-          onClose={handleCloseModal}
-          formData={formData}
-          handleInputChange={handleInputChange}
-          handleAddData={handleAddData}
-          errors={errors}
-          mode="create"
-        />
-      </Box>
+      {
+        loading ? (
+          <Center h="50vh">
+            <Spinner size="xl" />
+          </Center>
+        ) : (
+          <>
+            <SimpleGrid
+              columns={{ sm: 2, md: 3 }}
+              gap='10px'
+            >
+              {
+                cars.map((data) => {
+                  return (
+                    <div key={data.car_id}>
+                      <Card maxW='sm' mb='40px'>
+                        <CardBody>
+                          <Image
+                            src={data.image}
+                            alt='car-image'
+                            borderRadius='lg'
+                          />
+                          <Stack mt='6' spacing='3'>
+                            <Heading size='md'>
+                              <span>{`${data.car_name} - ${data.car_model}`}</span>
+                            </Heading>
+                            <Text>
+                              <SimpleGrid column={2} spacing={1}>
+                                <span>{`Daily ${formatCurrency(data.day_rate)}`}</span>
+                                <span>{`Monthly ${formatCurrency(data.month_rate)}`}</span>
+                              </SimpleGrid>
+                            </Text>
+                          </Stack>
+                        </CardBody>
+                        <Divider />
+                        <CardFooter>
+                          <ButtonGroup spacing='2'>
+                            <Button
+                              variant='outline'
+                              colorScheme='blue'
+                              onClick={() => handleOpenModal(data.car_id)}
+                              leftIcon={<MdCarRental />}
+                              size="sm">
+                              Rent
+                            </Button>
+                          </ButtonGroup>
+                        </CardFooter>
+                      </Card>
+                    </div>
+                  )
+                })
+              }
+            </SimpleGrid>
+            <Box>
+              <AddDataModal
+                isOpen={isOpen}
+                onClose={handleCloseModal}
+                formData={formData}
+                handleInputChange={handleInputChange}
+                handleAddData={handleAddData}
+                errors={errors}
+                mode="create"
+              />
+            </Box>
+          </>
+        )
+      }
     </Box>
   )
 }

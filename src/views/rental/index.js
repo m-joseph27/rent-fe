@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  useToast,
+  Spinner,
+  Center
+} from '@chakra-ui/react';
 import { getData, updateRental } from '../../services/rental';
 import ChakraTableComponent from '../../components/table/table';
 import { deleteRental } from '../../services/rental';
@@ -19,6 +24,7 @@ export default function RentalView() {
   const [errors, setErrors] = useState({});
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentRentalId, setCurrentRentalId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     rentCar();
@@ -29,8 +35,16 @@ export default function RentalView() {
       try {
         const data = await getData('/rentals');
         setCars(data);
+        setLoading(false);
       } catch (error) {
-        throw new Error();
+        setLoading(false)
+        toast({
+          title: 'Error.',
+          description: "Seems like the server doesn't working",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
       }
     }
 
@@ -116,16 +130,26 @@ export default function RentalView() {
 
   return(
     <Box mt="100px" pl="20px">
-      <ChakraTableComponent data={cars} handleDelete={handleDelete} handleUpdate={handleUpdate} />
-      <AddDataModal
-        isOpen={isOpen}
-        onClose={onClose}
-        formData={formData}
-        handleInputChange={handleInputChange}
-        handleAddData={handleAddData}
-        errors={errors}
-        mode="edit"
-      />
+      {
+        loading ? (
+          <Center h="50vh">
+            <Spinner size="xl" />
+          </Center>
+        ) : (
+          <>
+            <ChakraTableComponent data={cars} handleDelete={handleDelete} handleUpdate={handleUpdate} />
+            <AddDataModal
+              isOpen={isOpen}
+              onClose={onClose}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              handleAddData={handleAddData}
+              errors={errors}
+              mode="edit"
+            />
+          </>
+        )
+      }
     </Box>
   )
 }

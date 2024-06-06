@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  useToast,
+  Spinner,
+  Center
+} from '@chakra-ui/react';
 import { getCars, updateCar, deleteCar, uploadImage, createCar } from '../../services/car';
 import CarTableComponent from '../../components/table/carTable';
 import CarModal from '../../components/modal/carModal';
@@ -11,6 +17,7 @@ export default function AddCarView() {
   const [errors, setErrors] = useState({});
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentCarId, setCurrentCarId] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     car_name: '',
     car_model: '',
@@ -27,8 +34,16 @@ export default function AddCarView() {
     try {
       const data = await getCars('/cars');
       setCars(data);
+      setLoading(false);
     } catch (error) {
-      console.error('Failed to fetch cars', error);
+      setLoading(true);
+      toast({
+        title: 'Error.',
+        description: "Seems like the server doesn't working",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
     }
   }
 
@@ -131,17 +146,27 @@ export default function AddCarView() {
 
   return (
     <Box mt="100px" pl="20px">
-      <Button mb="30px" variant="solid" colorScheme="blue" onClick={() => setIsOpen(true)}>Add Car</Button>
-      <CarTableComponent data={cars} handleDelete={handleDelete} handleUpdate={handleUpdate} />
-      <CarModal
-        isOpen={isOpen}
-        onClose={onClose}
-        formData={formData}
-        handleInputChange={handleInputChange}
-        handleAddData={handleAddData}
-        errors={errors}
-        mode={isUpdating ? 'edit' : 'add'}
-      />
+      {
+        loading ? (
+          <Center h="50vh">
+            <Spinner size="xl" />
+          </Center>
+        ) : (
+          <>
+            <Button mb="30px" variant="solid" colorScheme="blue" onClick={() => setIsOpen(true)}>Add Car</Button>
+            <CarTableComponent data={cars} handleDelete={handleDelete} handleUpdate={handleUpdate} />
+            <CarModal
+              isOpen={isOpen}
+              onClose={onClose}
+              formData={formData}
+              handleInputChange={handleInputChange}
+              handleAddData={handleAddData}
+              errors={errors}
+              mode={isUpdating ? 'edit' : 'add'}
+            />
+          </>
+        )
+      }
     </Box>
   );
 }
